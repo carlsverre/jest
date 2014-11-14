@@ -66,6 +66,20 @@ describe('HasteModuleLoader', function() {
       });
     });
 
+    pit('dontMock supports another module path', function() {
+      var oldNodePath = process.env.NODE_PATH;
+      process.env.NODE_PATH = path.join(__dirname, 'test_root_2');
+
+      return buildLoader().then(function(loader) {
+        loader.requireModuleOrMock(null, 'jest-runtime')
+          .dontMock('OtherRootModule');
+        var exports = loader.requireModuleOrMock(null, 'OtherRootModule');
+        expect(exports).toBe('you got me');
+
+        process.env.NODE_PATH = oldNodePath;
+      });
+    });
+
     pit('doesnt mock modules when explicitly dontMock()ed via a different ' +
         'denormalized module name', function() {
       return buildLoader().then(function(loader) {

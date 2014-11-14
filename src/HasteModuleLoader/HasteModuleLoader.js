@@ -482,10 +482,17 @@ Loader.prototype._nodeModuleNameToPath = function(currPath, moduleName) {
     subModulePath = projectPathParts.join('/');
   }
 
+  var modulePaths = ['node_modules'];
+  var nodePath = process.env.NODE_PATH;
+  if (nodePath) {
+      modulePaths = modulePaths.concat(nodePath.split(':'));
+  }
+
   var resolveError = null;
   try {
     return resolve.sync(moduleName, {
       basedir: path.dirname(currPath),
+      moduleDirectory: modulePaths,
       extensions: this._config.moduleFileExtensions
         .map(function(ext){
           return '.' + ext;

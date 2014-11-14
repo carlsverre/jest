@@ -57,6 +57,18 @@ describe('HasteModuleLoader', function() {
       });
     });
 
+    pit('finds file in another module path', function() {
+      var oldNodePath = process.env.NODE_PATH;
+      process.env.NODE_PATH = path.join(__dirname, 'test_root_2:foobar');
+      return buildLoader().then(function(loader) {
+        var exports = loader.requireModule(null, 'OtherRootModule');
+        expect(exports).toBe('you got me');
+
+        // undo process.env change
+        process.env.NODE_PATH = oldNodePath;
+      });
+    });
+
     pit('throws on non-existant @providesModule modules', function() {
       return buildLoader().then(function(loader) {
         expect(function() {
